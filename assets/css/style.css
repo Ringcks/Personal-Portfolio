@@ -1346,7 +1346,118 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .project-list { grid-template-columns: repeat(3, 1fr); }
 
+    .project-preview {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+        overflow: hidden;
+        background: #1b1b1b;
+        padding: 0;
+        border-radius: 16px;
+        margin: 25px 0;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        text-align: center;
+        transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.6s ease, padding 0.4s ease;
+    }
 
+        .project-preview.active {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 1200px;
+            padding: 25px;
+        }
+
+    .project-preview-content img {
+        width: 100%;
+        max-width: 700px;
+        border-radius: 10px;
+        margin: 15px 0;
+    }
+
+    .project-preview-close {
+        float: right;
+        font-size: 28px;
+        cursor: pointer;
+        color: #fff;
+        transition: 0.3s;
+    }
+
+        .project-preview-close:hover {
+            color: #f33;
+        }
+
+    #preview-title {
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    #preview-desc {
+        color: #ccc;
+        font-size: 0.95rem;
+    }
+
+    /* Optional subtle fade-in animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }   }
+
+.preview-media-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 25px auto;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.media-wrapper {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+    .media-wrapper img,
+    .media-wrapper video {
+        width: 100%;
+        flex-shrink: 0;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #111;
+    }
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    z-index: 2;
+}
+
+    .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
 
   /**
    * BLOG
@@ -1354,7 +1465,7 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .blog-banner-box { height: 230px; }
 
-}
+
 
 
 
