@@ -176,67 +176,126 @@ const prevBtn = document.querySelector(".prev-btn");
 let currentIndex = 0;
 let mediaItems = [];
 
-// Click project item
+// ====== OPEN PROJECT PREVIEW ======
 document.querySelectorAll(".project-item a").forEach((item) => {
     item.addEventListener("click", (e) => {
         e.preventDefault();
 
         const parent = item.closest(".project-item");
-        const title = parent.querySelector(".project-title").textContent;
+        const title = parent.querySelector(".project-title").textContent.trim();
         const desc = item.dataset.desc || "This is a preview of the project.";
 
-        // Collect media (multiple supported)
-        // Add data-media attribute to your <a> tag with JSON list
-        const mediaList = JSON.parse(item.dataset.media || "[]");
+        // Parse media list (array of images/videos)
+        let mediaList;
+        try {
+            mediaList = JSON.parse(item.dataset.media || "[]");
+        } catch (err) {
+            console.error("Invalid data-media JSON", err);
+            mediaList = [];
+        }
 
+        // Update content
         previewTitle.textContent = title;
         previewDesc.textContent = desc;
-
-        // Clear old media
         mediaWrapper.innerHTML = "";
 
-        // Create new media slides
+        // Build slides
         mediaList.forEach((src) => {
-            let el;
-            if (src.endsWith(".mp4") || src.endsWith(".webm")) {
-                el = document.createElement("video");
-                el.src = src;
-                el.controls = true;
-            } else {
-                el = document.createElement("img");
-                el.src = src;
-                el.loading = "lazy";
-            }
+            const el = src.match(/\.(mp4|webm|ogg)$/i)
+                ? Object.assign(document.createElement("video"), {
+                    src,
+                    controls: true,
+                    preload: "metadata",
+                })
+                : Object.assign(document.createElement("img"), {
+                    src,
+                    loading: "lazy",
+                });
+            el.classList.add("media-item");
             mediaWrapper.appendChild(el);
         });
 
         mediaItems = [...mediaWrapper.children];
         currentIndex = 0;
-        updateSlider();
+
+        // Hide nav if only 1 item
+        const showNav = mediaItems.length > 1;
+        nextBtn.style.display = prevBtn.style.display = showNav ? "block" : "none";
+
+        updateSlider(true);
 
         projectPreview.classList.add("active");
         projectPreview.scrollIntoView({ behavior: "smooth" });
     });
 });
 
-// Navigation
-nextBtn.addEventListener("click", () => {
+// ====== SLIDER CONTROLS ======
+nextBtn.addEventListener("click", nextMedia);
+prevBtn.addEventListener("click", prevMedia);
+
+function nextMedia() {
     if (!mediaItems.length) return;
     currentIndex = (currentIndex + 1) % mediaItems.length;
     updateSlider();
-});
+}
 
-prevBtn.addEventListener("click", () => {
+function prevMedia() {
     if (!mediaItems.length) return;
     currentIndex = (currentIndex - 1 + mediaItems.length) % mediaItems.length;
     updateSlider();
-});
-
-function updateSlider() {
-    mediaWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
 }
 
-// Close
+function updateSlider(initial = false) {
+    mediaItems.forEach((item, i) => {
+        item.style.transition = initial ? "none" : "opacity 0.4s ease";
+        item.style.opacity = i === currentIndex ? "1" : "0";
+        item.style.position = i === currentIndex ? "relative" : "absolute";
+        item.style.left = "0";
+        item.style.right = "0";
+    });
+
+    // Pause all videos except current
+    mediaItems.forEach((m, i) => {
+        if (m.tagName === "VIDEO") {
+            if (i === currentIndex) m.play();
+            else m.pause();
+        }
+    });
+}
+
+// ====== CLOSE PREVIEW ======
 previewClose.addEventListener("click", () => {
     projectPreview.classList.remove("active");
+    // Pause any playing video
+    mediaItems.forEach((m) => m.tagName === "VIDEO" && m.pause());
+});
+
+// ====== SWIPE (MOBILE) ======
+let touchStartX = 0;
+mediaWrapper.addEventListener("touchstart", (e) => {
+    touchStartX = e.touches[0].clientX;
+});
+
+mediaWrapper.addEventListener("touchend", (e) => {
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(diff) > 50) {
+        diff > 0 ? prevMedia() : nextMedia();
+    }
+});
+
+// ====== KEYBOARD NAVIGATION ======
+window.addEventListener("keydown", (e) => {
+    if (!projectPreview.classList.contains("active")) return;
+
+    switch (e.key) {
+        case "ArrowRight":
+            nextMedia();
+            break;
+        case "ArrowLeft":
+            prevMedia();
+            break;
+        case "Escape":
+            projectPreview.classList.remove("active");
+            break;
+    }
 });
