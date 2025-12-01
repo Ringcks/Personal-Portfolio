@@ -200,17 +200,40 @@ document.querySelectorAll(".project-item a").forEach((item) => {
         mediaWrapper.innerHTML = "";
 
         // Build slides
+        // Build slides (image, video, audio)
         mediaList.forEach((src) => {
-            const el = src.match(/\.(mp4|webm|ogg)$/i)
-                ? Object.assign(document.createElement("video"), {
+
+            let el;
+
+            // AUDIO SUPPORT
+            if (src.match(/\.(mp3|wav|ogg)$/i)) {
+                el = Object.assign(document.createElement("audio"), {
                     src,
                     controls: true,
-                    preload: "metadata",
-                })
-                : Object.assign(document.createElement("img"), {
-                    src,
-                    loading: "lazy",
+                    preload: "auto"
                 });
+
+                // autoplay audio when preview opens
+                el.addEventListener("canplay", () => el.play());
+            }
+
+            // VIDEO SUPPORT
+            else if (src.match(/\.(mp4|webm|mov|m4v)$/i)) {
+                el = Object.assign(document.createElement("video"), {
+                    src,
+                    controls: true,
+                    preload: "metadata"
+                });
+            }
+
+            // IMAGE SUPPORT
+            else {
+                el = Object.assign(document.createElement("img"), {
+                    src,
+                    loading: "lazy"
+                });
+            }
+
             el.classList.add("media-item");
             mediaWrapper.appendChild(el);
         });
@@ -256,10 +279,12 @@ function updateSlider(initial = false) {
 
     // Pause all videos except current
     mediaItems.forEach((m, i) => {
-        if (m.tagName === "VIDEO") {
+
+        if (m.tagName === "VIDEO" || m.tagName === "AUDIO") {
             if (i === currentIndex) m.play();
             else m.pause();
         }
+
     });
 }
 
@@ -267,7 +292,11 @@ function updateSlider(initial = false) {
 previewClose.addEventListener("click", () => {
     projectPreview.classList.remove("active");
     // Pause any playing video
-    mediaItems.forEach((m) => m.tagName === "VIDEO" && m.pause());
+    mediaItems.forEach((m) => {
+        if (m.tagName === "VIDEO" || m.tagName === "AUDIO") {
+            m.pause();
+        }
+    });
 });
 
 // ====== SWIPE (MOBILE) ======
