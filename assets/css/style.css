@@ -684,27 +684,24 @@ main {
 
 .select-item button:hover { --eerie-black-2: hsl(240, 2%, 20%); }
 
-    .project-preview {
-        opacity: 0;
-        transform: translateY(-10px);
-        max-height: 0;
-        overflow: hidden;
-        background: #1b1b1b;
-        padding: 0;
-        border-radius: 16px;
-        margin: 25px 0;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.6s ease, padding 0.4s ease;
-    }
+.project-preview {
+    display: none;
+    opacity: 0;
+    transform: translateY(8px);
+    background: #1b1b1b;
+    padding: 25px;
+    border-radius: 16px;
+    margin: 25px 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
 
-        .project-preview.active {
-            opacity: 1;
-            transform: translateY(0);
-            max-height: 1200px;
-            padding: 25px;
-            animation: fadeInUp 0.5s ease forwards;
-        }
+    .project-preview.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+        animation: fadeInUp 0.4s ease forwards;
+    }
 
     .project-preview-close {
         float: right;
@@ -1421,25 +1418,22 @@ textarea.form-input::-webkit-resizer { display: none; }
    PROJECT PREVIEW
 ============================== */
     .project-preview {
+        display: none;
         opacity: 0;
-        transform: translateY(-10px);
-        max-height: 0;
-        overflow: hidden;
+        transform: translateY(8px);
         background: #1b1b1b;
-        padding: 0;
+        padding: 25px;
         border-radius: 16px;
         margin: 25px 0;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         text-align: center;
-        transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.6s ease, padding 0.4s ease;
     }
 
         .project-preview.active {
+            display: block;
             opacity: 1;
             transform: translateY(0);
-            max-height: 1200px;
-            padding: 25px;
-            animation: fadeInUp 0.5s ease forwards;
+            animation: fadeInUp 0.4s ease forwards;
         }
 
     .project-preview-close {
